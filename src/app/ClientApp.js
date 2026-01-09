@@ -560,6 +560,7 @@ export default function ClientApp() {
             riferimento a servizi esterni.
           </p>
         </section>
+        {notice ? <div className="notice span-2">{notice}</div> : null}
 
         {!session ? (
           <>
@@ -707,7 +708,6 @@ export default function ClientApp() {
                   </button>
                 </div>
               </div>
-              {notice ? <div className="notice">{notice}</div> : null}
             </section>
 
             <section className="panel">
