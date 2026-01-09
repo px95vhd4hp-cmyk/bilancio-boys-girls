@@ -885,7 +885,9 @@ export default function ClientApp() {
                         <strong>{expense.title}</strong>
                         <span className="tag">{formatEur(expense.amount_cents)}</span>
                       </div>
-                      <div className="muted">Pagato da {expense.payer_name}</div>
+                      <div className="muted">
+                        Pagato da <span className="pill-slim pill-success">{expense.payer_name}</span>
+                      </div>
                       <div className="button-row">
                         <button
                           className="button ghost"
@@ -913,79 +915,82 @@ export default function ClientApp() {
               <div className="notice">
                 Per aggiungere o modificare ruoli admin/co-admin serve il codice admin globale.
               </div>
-              {adminUnlocked ? (
-                <div className="button-row">
-                  <span className="tag">Ruoli admin attivi</span>
-                  <button className="button ghost" onClick={handleLockAdmin} disabled={loading}>
-                    Nascondi
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <label className="field">
-                    Codice admin globale
-                    <input
-                      className="input"
-                      type="password"
-                      value={adminActionCode}
-                      onChange={(event) => setAdminActionCode(event.target.value)}
-                      placeholder="1234"
-                    />
-                  </label>
+              <details className="accordion">
+                <summary>Strumenti admin</summary>
+                {adminUnlocked ? (
                   <div className="button-row">
-                    <button className="button ghost" onClick={handleVerifyAdmin} disabled={loading}>
-                      Verifica codice
+                    <span className="tag">Ruoli admin attivi</span>
+                    <button className="button ghost" onClick={handleLockAdmin} disabled={loading}>
+                      Nascondi
                     </button>
                   </div>
-                </>
-              )}
-              {canEditMembers ? (
-                <div className="card">
-                  <strong>Aggiungi membro</strong>
-                  <div className="grid two">
+                ) : (
+                  <>
                     <label className="field">
-                      Nome
+                      Codice admin globale
                       <input
                         className="input"
-                        value={newMember.name}
-                        onChange={(event) =>
-                          setNewMember((prev) => ({ ...prev, name: event.target.value }))
-                        }
+                        type="password"
+                        value={adminActionCode}
+                        onChange={(event) => setAdminActionCode(event.target.value)}
+                        placeholder="1234"
                       />
                     </label>
-                    {adminUnlocked ? (
+                    <div className="button-row">
+                      <button className="button ghost" onClick={handleVerifyAdmin} disabled={loading}>
+                        Verifica codice
+                      </button>
+                    </div>
+                  </>
+                )}
+                {canEditMembers ? (
+                  <div className="card">
+                    <strong>Aggiungi membro</strong>
+                    <div className="grid two">
                       <label className="field">
-                        Ruolo
-                        <select
-                          className="select"
-                          value={newMember.role}
+                        Nome
+                        <input
+                          className="input"
+                          value={newMember.name}
                           onChange={(event) =>
-                            setNewMember((prev) => ({ ...prev, role: event.target.value }))
+                            setNewMember((prev) => ({ ...prev, name: event.target.value }))
                           }
-                        >
-                          {ROLE_OPTIONS.map((role) => (
-                            <option key={role.value} value={role.value}>
-                              {role.label}
-                            </option>
-                          ))}
-                        </select>
+                        />
                       </label>
-                    ) : (
-                      <label className="field">
-                        Ruolo
-                        <input className="input" value="Membro" readOnly />
-                      </label>
-                    )}
+                      {adminUnlocked ? (
+                        <label className="field">
+                          Ruolo
+                          <select
+                            className="select"
+                            value={newMember.role}
+                            onChange={(event) =>
+                              setNewMember((prev) => ({ ...prev, role: event.target.value }))
+                            }
+                          >
+                            {ROLE_OPTIONS.map((role) => (
+                              <option key={role.value} value={role.value}>
+                                {role.label}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                      ) : (
+                        <label className="field">
+                          Ruolo
+                          <input className="input" value="Membro" readOnly />
+                        </label>
+                      )}
+                    </div>
+                    <div className="button-row">
+                      <button className="button ghost" onClick={handleAddMember} disabled={loading}>
+                        Aggiungi
+                      </button>
+                    </div>
                   </div>
-                  <div className="button-row">
-                    <button className="button ghost" onClick={handleAddMember} disabled={loading}>
-                      Aggiungi
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="muted">Solo l'admin può aggiungere membri.</div>
-              )}
+                ) : (
+                  <div className="muted">Solo l'admin può aggiungere membri.</div>
+                )}
+              </details>
               <div className="list">
                 {members.map((member) => (
                   <div className="card" key={member.id}>
@@ -1061,34 +1066,36 @@ export default function ClientApp() {
 
             {adminUnlocked ? (
               <section className="panel section" id="admin">
-                <h2 className="panel-title">Pannello admin</h2>
-                <div className="notice">
-                  Elenco completo dei gruppi creati con questo servizio.
-                </div>
-                <div className="button-row">
-                  <button className="button ghost" onClick={handleLoadGroups} disabled={loading}>
-                    Carica gruppi
-                  </button>
-                </div>
-                {adminGroupsLoaded ? (
-                  <div className="list">
-                    {adminGroups.length === 0 ? (
-                      <div className="notice">Nessun gruppo trovato.</div>
-                    ) : (
-                      adminGroups.map((group) => (
-                        <div className="card" key={group.id}>
-                          <strong>{group.name}</strong>
-                          <div className="muted">ID: {group.id}</div>
-                          <div className="muted">
-                            Membri: {group.members_count} • Spese: {group.expenses_count}
-                          </div>
-                        </div>
-                      ))
-                    )}
+                <details className="accordion" open={false}>
+                  <summary>Pannello admin</summary>
+                  <div className="notice">
+                    Elenco completo dei gruppi creati con questo servizio.
                   </div>
-                ) : (
-                  <div className="muted">Premi “Carica gruppi” per visualizzare.</div>
-                )}
+                  <div className="button-row">
+                    <button className="button ghost" onClick={handleLoadGroups} disabled={loading}>
+                      Carica gruppi
+                    </button>
+                  </div>
+                  {adminGroupsLoaded ? (
+                    <div className="list">
+                      {adminGroups.length === 0 ? (
+                        <div className="notice">Nessun gruppo trovato.</div>
+                      ) : (
+                        adminGroups.map((group) => (
+                          <div className="card" key={group.id}>
+                            <strong>{group.name}</strong>
+                            <div className="muted">ID: {group.id}</div>
+                            <div className="muted">
+                              Membri: {group.members_count} • Spese: {group.expenses_count}
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  ) : (
+                    <div className="muted">Premi “Carica gruppi” per visualizzare.</div>
+                  )}
+                </details>
               </section>
             ) : null}
 
@@ -1103,7 +1110,11 @@ export default function ClientApp() {
                       <strong>
                         {tx.from_name} paga {tx.to_name}
                       </strong>
-                      <div className="muted">{formatEur(tx.amount_cents)}</div>
+                      <div className="muted">
+                        <span className="pill-slim pill-warning">
+                          {formatEur(tx.amount_cents)}
+                        </span>
+                      </div>
                     </div>
                   ))
                 )}
@@ -1206,6 +1217,14 @@ export default function ClientApp() {
           >
             <span className="icon">✓</span>
             Pareggia
+          </button>
+          <button
+            className={`bottom-button ${activeSection === "members" ? "active" : ""}`}
+            onClick={() => scrollToSection("members")}
+            type="button"
+          >
+            <span className="icon">👥</span>
+            Membri
           </button>
         </nav>
       ) : null}

@@ -89,6 +89,28 @@ textarea {
   letter-spacing: 0.08em;
 }
 
+.pill-slim {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #f0f7ff;
+  color: var(--brand-dark);
+}
+
+.pill-success {
+  background: #e8f9ee;
+  color: #1d6b3a;
+}
+
+.pill-warning {
+  background: #fff4e5;
+  color: #9b4a00;
+}
+
 .panel {
   background: var(--card);
   border-radius: var(--radius);
@@ -237,6 +259,39 @@ textarea {
   font-size: 13px;
 }
 
+.accordion {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+  padding: 10px 12px;
+  display: grid;
+  gap: 12px;
+}
+
+.accordion summary {
+  list-style: none;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.accordion summary::after {
+  content: "▾";
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.accordion[open] summary::after {
+  content: "▴";
+}
+
 .footer {
   margin-top: 16px;
   text-align: center;
@@ -292,7 +347,7 @@ textarea {
   transform: translateX(-50%);
   width: min(980px, calc(100% - 28px));
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 12px;
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: var(--blur);
