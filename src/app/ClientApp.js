@@ -674,7 +674,7 @@ export default function ClientApp() {
                     onChange={(event) =>
                       setCreateData((prev) => ({ ...prev, pin: event.target.value }))
                     }
-                    placeholder="1234"
+                    placeholder="Codice admin"
                   />
                 </label>
                 <label className="field">
@@ -686,7 +686,7 @@ export default function ClientApp() {
                     onChange={(event) =>
                       setCreateData((prev) => ({ ...prev, adminCode: event.target.value }))
                     }
-                    placeholder="1234"
+                    placeholder="Codice admin"
                   />
                 </label>
               </div>
@@ -731,7 +731,7 @@ export default function ClientApp() {
                     onChange={(event) =>
                       setJoinData((prev) => ({ ...prev, pin: event.target.value }))
                     }
-                    placeholder="1234"
+                    placeholder="Codice admin"
                   />
                 </label>
                 <label className="field">
@@ -743,7 +743,7 @@ export default function ClientApp() {
                     onChange={(event) =>
                       setJoinData((prev) => ({ ...prev, adminCode: event.target.value }))
                     }
-                    placeholder="1234"
+                    placeholder="Codice admin"
                   />
                 </label>
               </div>
@@ -957,7 +957,7 @@ export default function ClientApp() {
                         type="password"
                         value={adminActionCode}
                         onChange={(event) => setAdminActionCode(event.target.value)}
-                        placeholder="1234"
+                        placeholder="Codice admin"
                       />
                     </label>
                     <div className="button-row">
@@ -1228,7 +1228,7 @@ export default function ClientApp() {
                   type="password"
                   value={resetCode}
                   onChange={(event) => setResetCode(event.target.value)}
-                  placeholder="1234"
+                  placeholder="Codice admin"
                 />
               </label>
               <div className="button-row">
