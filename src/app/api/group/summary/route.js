@@ -85,7 +85,7 @@ export async function GET(request) {
 
     const { data: settlements, error: settlementsError } = await supabase
       .from("settlements")
-      .select("from_member_id,to_member_id,amount_cents")
+      .select("from_member_id,to_member_id,amount_cents,created_at")
       .eq("group_id", groupId);
 
     if (settlementsError) {
@@ -132,6 +132,14 @@ export async function GET(request) {
       members,
       expenses: responseExpenses,
       transactions,
+      settlements: (settlements || []).map((settlement) => ({
+        from_member_id: settlement.from_member_id,
+        to_member_id: settlement.to_member_id,
+        amount_cents: settlement.amount_cents,
+        created_at: settlement.created_at,
+        from_name: memberMap.get(settlement.from_member_id)?.name || "-",
+        to_name: memberMap.get(settlement.to_member_id)?.name || "-",
+      })),
     });
   } catch (err) {
     return Response.json({ error: "Errore inatteso." }, { status: 500 });

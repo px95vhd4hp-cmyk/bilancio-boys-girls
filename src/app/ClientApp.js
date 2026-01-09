@@ -77,6 +77,7 @@ export default function ClientApp() {
   const [members, setMembers] = useState([]);
   const [expenses, setExpenses] = useState([]);
   const [transactions, setTransactions] = useState([]);
+  const [settlements, setSettlements] = useState([]);
 
   const [expenseData, setExpenseData] = useState({
     title: "",
@@ -146,6 +147,7 @@ export default function ClientApp() {
       setMembers(data.members || []);
       setExpenses(data.expenses || []);
       setTransactions(data.transactions || []);
+      setSettlements(data.settlements || []);
       if (data.members?.length && !expenseData.payerId) {
         setExpenseData((prev) => ({ ...prev, payerId: data.members[0].id }));
       }
@@ -186,6 +188,17 @@ export default function ClientApp() {
   const myDebts = useMemo(() => {
     if (!session?.memberId) return [];
     return transactions.filter((tx) => tx.from_id === session.memberId);
+  }, [transactions, session?.memberId]);
+
+  const personalBalance = useMemo(() => {
+    if (!session?.memberId) return { owe: 0, receive: 0 };
+    const owe = transactions
+      .filter((tx) => tx.from_id === session.memberId)
+      .reduce((sum, tx) => sum + tx.amount_cents, 0);
+    const receive = transactions
+      .filter((tx) => tx.to_id === session.memberId)
+      .reduce((sum, tx) => sum + tx.amount_cents, 0);
+    return { owe, receive };
   }, [transactions, session?.memberId]);
 
   const handleCreate = async () => {
@@ -771,6 +784,17 @@ export default function ClientApp() {
                   </button>
                 </div>
               </div>
+              <div className="card">
+                <strong>Saldo personale</strong>
+                <div className="row">
+                  <span className="pill-slim pill-warning">
+                    Da pagare: {formatEur(personalBalance.owe)}
+                  </span>
+                  <span className="pill-slim pill-success">
+                    Da ricevere: {formatEur(personalBalance.receive)}
+                  </span>
+                </div>
+              </div>
             </section>
 
             <section className="panel section" id="expense">
@@ -1162,6 +1186,34 @@ export default function ClientApp() {
                   </div>
                 </>
               )}
+            </section>
+
+            <section className="panel section" id="payments">
+              <h2 className="panel-title">Storico pagamenti</h2>
+              <div className="list">
+                {settlements.length === 0 ? (
+                  <div className="notice">Nessun pagamento registrato.</div>
+                ) : (
+                  settlements.map((item, idx) => (
+                    <div className="card" key={`${item.from_member_id}-${item.to_member_id}-${idx}`}>
+                      <strong>
+                        {item.from_name} paga {item.to_name}
+                      </strong>
+                      <div className="muted">
+                        <span className="pill-slim pill-success">
+                          {formatEur(item.amount_cents)}
+                        </span>
+                        {item.created_at ? (
+                          <span className="muted">
+                            {" "}
+                            • {new Date(item.created_at).toLocaleDateString("it-IT")}
+                          </span>
+                        ) : null}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
             </section>
 
             <section className="panel section" id="reset">
