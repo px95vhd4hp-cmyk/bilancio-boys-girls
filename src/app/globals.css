@@ -34,6 +34,19 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+body[data-theme="dark"] {
+  --bg: #0d0d12;
+  --bg-accent: #14141a;
+  --ink: #f2f2f7;
+  --muted: #a1a1aa;
+  --card: #1c1c22;
+  --line: #2a2a32;
+  --brand: #0a84ff;
+  --brand-dark: #3b82f6;
+  --accent: #30d158;
+  background: linear-gradient(180deg, #0b0b10, var(--bg));
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -205,6 +218,10 @@ textarea {
   background: #fbfbfd;
 }
 
+body[data-theme="dark"] .card {
+  background: #17171d;
+}
+
 .card strong {
   font-size: 15px;
 }
@@ -257,6 +274,12 @@ textarea {
   color: #0a4a8a;
   border: 1px dashed #c9ddf6;
   font-size: 13px;
+}
+
+body[data-theme="dark"] .notice {
+  background: rgba(10, 132, 255, 0.15);
+  color: #d2e7ff;
+  border-color: rgba(10, 132, 255, 0.3);
 }
 
 .accordion {
@@ -370,6 +393,20 @@ textarea {
   justify-items: center;
   gap: 6px;
   cursor: pointer;
+}
+
+body[data-theme="dark"] .bottom-button {
+  background: #1f1f27;
+}
+
+body[data-theme="dark"] .bottom-button.active {
+  background: rgba(10, 132, 255, 0.2);
+}
+
+.sparkline {
+  width: 100%;
+  height: 90px;
+  color: var(--brand);
 }
 
 .bottom-button.active {

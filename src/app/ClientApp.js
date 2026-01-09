@@ -58,6 +58,7 @@ export default function ClientApp() {
   const [session, setSession] = useState(null);
   const [notice, setNotice] = useState("");
   const [activeSection, setActiveSection] = useState("overview");
+  const [darkMode, setDarkMode] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [createData, setCreateData] = useState({
@@ -119,6 +120,11 @@ export default function ClientApp() {
     const existing = readSession();
     if (existing) {
       setSession(existing);
+    }
+    const storedTheme = typeof window !== "undefined" ? window.localStorage.getItem("bbg-theme") : null;
+    if (storedTheme === "dark") {
+      setDarkMode(true);
+      document.body.dataset.theme = "dark";
     }
   }, []);
 
@@ -199,6 +205,21 @@ export default function ClientApp() {
       .reduce((sum, tx) => sum + tx.amount_cents, 0);
     return { owe, receive };
   }, [transactions, session?.memberId]);
+
+  const groupTotals = useMemo(() => {
+    const totalSpent = expenses.reduce((sum, exp) => sum + exp.amount_cents, 0);
+    const paidByMe = session?.memberId
+      ? expenses
+          .filter((exp) => exp.payer_member_id === session.memberId)
+          .reduce((sum, exp) => sum + exp.amount_cents, 0)
+      : 0;
+    return { totalSpent, paidByMe };
+  }, [expenses, session?.memberId]);
+
+  const expenseTrend = useMemo(() => {
+    const recent = [...expenses].slice(0, 10).reverse();
+    return recent.map((exp) => exp.amount_cents);
+  }, [expenses]);
 
   const handleCreate = async () => {
     setLoading(true);
@@ -624,7 +645,16 @@ export default function ClientApp() {
             {session ? `Attivo: ${session.memberName}` : "Pronto per iniziare"}
           </div>
         </div>
-        <span className="ios-chip">{session ? "Online" : "Offline"}</span>
+        <div className="button-row">
+          <button
+            className="button ghost"
+            type="button"
+            onClick={() => setDarkMode((prev) => !prev)}
+          >
+            {darkMode ? "Light" : "Dark"}
+          </button>
+          <span className="ios-chip">{session ? "Online" : "Offline"}</span>
+        </div>
       </header>
       <div className="shell">
         <GroupParamWatcher onChange={handleGroupParam} />
@@ -794,6 +824,25 @@ export default function ClientApp() {
                     Da ricevere: {formatEur(personalBalance.receive)}
                   </span>
                 </div>
+              </div>
+              <div className="card">
+                <strong>Totali del gruppo</strong>
+                <div className="row">
+                  <span className="pill-slim">
+                    Speso totale: {formatEur(groupTotals.totalSpent)}
+                  </span>
+                  <span className="pill-slim pill-success">
+                    Hai pagato: {formatEur(groupTotals.paidByMe)}
+                  </span>
+                </div>
+              </div>
+              <div className="card">
+                <strong>Andamento spese</strong>
+                {expenseTrend.length < 2 ? (
+                  <div className="muted">Aggiungi almeno 2 spese per vedere il grafico.</div>
+                ) : (
+                  <Sparkline values={expenseTrend} />
+                )}
               </div>
             </section>
 
@@ -1280,6 +1329,27 @@ export default function ClientApp() {
   );
 }
 
+function Sparkline({ values }) {
+  const width = 280;
+  const height = 80;
+  const max = Math.max(...values);
+  const min = Math.min(...values);
+  const range = max - min || 1;
+  const step = values.length > 1 ? width / (values.length - 1) : width;
+  const points = values
+    .map((v, i) => {
+      const x = i * step;
+      const y = height - ((v - min) / range) * height;
+      return `${x},${y}`;
+    })
+    .join(" ");
+  return (
+    <svg viewBox={`0 0 ${width} ${height}`} className="sparkline" role="img">
+      <polyline points={points} fill="none" stroke="currentColor" strokeWidth="3" />
+    </svg>
+  );
+}
+
 function GroupParamWatcher({ onChange }) {
   const params = useSearchParams();
 
@@ -1289,3 +1359,10 @@ function GroupParamWatcher({ onChange }) {
 
   return null;
 }
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    document.body.dataset.theme = darkMode ? "dark" : "light";
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("bbg-theme", darkMode ? "dark" : "light");
+    }
+  }, [darkMode]);
