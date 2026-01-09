@@ -97,7 +97,6 @@ export default function ClientApp() {
 
   const [settleData, setSettleData] = useState({
     toMemberId: "",
-    amount: "",
   });
 
   const [resetCode, setResetCode] = useState("");
@@ -364,10 +363,11 @@ export default function ClientApp() {
     setLoading(true);
     setNotice("");
     try {
-      const amountCents = parseAmount(settleData.amount);
-      if (!settleData.toMemberId || amountCents === null) {
-        throw new Error("Seleziona un creditore e un importo.");
+      const selectedDebt = myDebts.find((tx) => tx.to_id === settleData.toMemberId);
+      if (!settleData.toMemberId || !selectedDebt) {
+        throw new Error("Seleziona un debito da pareggiare.");
       }
+      const amountCents = selectedDebt.amount_cents;
       const response = await fetch("/api/settlement", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -380,7 +380,7 @@ export default function ClientApp() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data?.error || "Errore registrazione pagamento");
-      setSettleData({ toMemberId: "", amount: "" });
+      setSettleData({ toMemberId: "" });
       await refreshSummary();
     } catch (err) {
       setNotice(err.message || "Errore inatteso");
@@ -1157,7 +1157,7 @@ export default function ClientApp() {
                       className="select"
                       value={settleData.toMemberId}
                       onChange={(event) =>
-                        setSettleData((prev) => ({ ...prev, toMemberId: event.target.value }))
+                        setSettleData({ toMemberId: event.target.value })
                       }
                     >
                       <option value="">Seleziona</option>
@@ -1168,19 +1168,15 @@ export default function ClientApp() {
                       ))}
                     </select>
                   </label>
-                  <label className="field">
-                    Importo
-                    <input
-                      className="input"
-                      value={settleData.amount}
-                      onChange={(event) =>
-                        setSettleData((prev) => ({ ...prev, amount: event.target.value }))
-                      }
-                      placeholder="20,00"
-                    />
-                  </label>
+                  <div className="muted">
+                    Il pagamento verrà registrato per l'intero importo selezionato.
+                  </div>
                   <div className="button-row">
-                    <button className="button secondary" onClick={handleSettle} disabled={loading}>
+                    <button
+                      className="button secondary"
+                      onClick={handleSettle}
+                      disabled={loading || !settleData.toMemberId}
+                    >
                       Registra pagamento
                     </button>
                   </div>
