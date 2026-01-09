@@ -2,7 +2,8 @@
 
 export const dynamic = "force-dynamic";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 const WEIGHTS = ["0", "50", "60", "70", "75", "80", "90", "100"];
 const ROLE_OPTIONS = [
@@ -111,14 +112,11 @@ export default function Home() {
     }
   }, []);
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
-    const groupId = params.get("group");
+  const handleGroupParam = (groupId) => {
     if (groupId) {
       setGroupFromLink(groupId);
     }
-  }, []);
+  };
 
   useEffect(() => {
     if (groupFromLink) {
@@ -555,6 +553,9 @@ export default function Home() {
   return (
     <div className="page">
       <div className="shell">
+        <Suspense fallback={null}>
+          <GroupParamWatcher onChange={handleGroupParam} />
+        </Suspense>
         <section className="hero span-2">
           <span className="pill">Bilancio Boys & Girls</span>
           <h1>Gestione spese di gruppo, zero stress.</h1>
@@ -1080,4 +1081,14 @@ export default function Home() {
       </div>
     </div>
   );
+}
+
+function GroupParamWatcher({ onChange }) {
+  const params = useSearchParams();
+
+  useEffect(() => {
+    onChange(params.get("group") || "");
+  }, [params, onChange]);
+
+  return null;
 }
