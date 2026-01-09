@@ -1,7 +1,8 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
 
 const WEIGHTS = ["0", "50", "60", "70", "75", "80", "90", "100"];
 const ROLE_OPTIONS = [
@@ -54,9 +55,7 @@ const clearSession = () => {
 };
 
 export default function Home() {
-  const searchParams = useSearchParams();
-  const groupFromLink = searchParams.get("group");
-
+  const [groupFromLink, setGroupFromLink] = useState("");
   const [session, setSession] = useState(null);
   const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(false);
@@ -109,6 +108,15 @@ export default function Home() {
     const existing = readSession();
     if (existing) {
       setSession(existing);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const groupId = params.get("group");
+    if (groupId) {
+      setGroupFromLink(groupId);
     }
   }, []);
 
