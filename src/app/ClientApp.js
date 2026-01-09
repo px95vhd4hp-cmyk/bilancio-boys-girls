@@ -1031,8 +1031,12 @@ export default function ClientApp() {
             </section>
 
 
-            <details className="accordion section" id="advanced">
-              <summary>Avanzate</summary>
+            <section className="panel section" id="advanced">
+              <SectionHeader
+                title="Avanzate"
+                help="Strumenti di gestione avanzata del gruppo."
+                onHelp={handleHelp}
+              />
               <div className="advanced-grid">
                 <section className="panel section" id="trend">
                   <SectionHeader
@@ -1374,7 +1378,7 @@ export default function ClientApp() {
               </div>
             </section>
               </div>
-            </details>
+            </section>
           </>
         )}
 
