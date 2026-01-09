@@ -90,6 +90,8 @@ export default function ClientApp() {
   const [newMember, setNewMember] = useState({ name: "", role: "member" });
   const [adminActionCode, setAdminActionCode] = useState("");
   const [adminUnlocked, setAdminUnlocked] = useState(false);
+  const [adminGroups, setAdminGroups] = useState([]);
+  const [adminGroupsLoaded, setAdminGroupsLoaded] = useState(false);
 
   const [settleData, setSettleData] = useState({
     toMemberId: "",
@@ -102,6 +104,15 @@ export default function ClientApp() {
     if (!session?.groupId || typeof window === "undefined") return "";
     return `${window.location.origin}/?group=${session.groupId}`;
   }, [session?.groupId]);
+
+  const currentMember = useMemo(() => {
+    if (!session?.memberId) return null;
+    return members.find((member) => member.id === session.memberId) || null;
+  }, [members, session?.memberId]);
+
+  const canEditMembers = Boolean(
+    currentMember && (currentMember.is_group_admin || currentMember.is_program_admin)
+  );
 
   useEffect(() => {
     const existing = readSession();
@@ -419,12 +430,17 @@ export default function ClientApp() {
   const handleLockAdmin = () => {
     setAdminUnlocked(false);
     setAdminActionCode("");
+    setAdminGroups([]);
+    setAdminGroupsLoaded(false);
   };
 
   const handleSaveMember = async (memberId) => {
     setLoading(true);
     setNotice("");
     try {
+      if (!canEditMembers) {
+        throw new Error("Solo l'admin può modificare i membri.");
+      }
       const name = String(memberEdits[memberId] || "").trim();
       if (!name) {
         throw new Error("Il nome non può essere vuoto.");
@@ -454,6 +470,9 @@ export default function ClientApp() {
     setLoading(true);
     setNotice("");
     try {
+      if (!canEditMembers) {
+        throw new Error("Solo l'admin può modificare i membri.");
+      }
       const response = await fetch(`/api/member/${memberId}?groupId=${session.groupId}`, {
         method: "DELETE",
       });
@@ -481,6 +500,9 @@ export default function ClientApp() {
       }
       if (!adminUnlocked || !adminActionCode) {
         throw new Error("Inserisci il codice admin globale.");
+      }
+      if (!canEditMembers) {
+        throw new Error("Solo l'admin può aggiornare i ruoli.");
       }
       if (role === "admin") {
         const currentAdmin = members.find((member) => member.is_group_admin);
@@ -521,6 +543,9 @@ export default function ClientApp() {
       if (!name) {
         throw new Error("Inserisci il nome del nuovo membro.");
       }
+      if (!canEditMembers) {
+        throw new Error("Solo l'admin può aggiungere membri.");
+      }
       if (
         (newMember.role === "admin" || newMember.role === "coadmin") &&
         (!adminUnlocked || !adminActionCode)
@@ -541,6 +566,26 @@ export default function ClientApp() {
       if (!response.ok) throw new Error(data?.error || "Errore aggiunta membro");
       setNewMember({ name: "", role: "member" });
       await refreshSummary();
+    } catch (err) {
+      setNotice(err.message || "Errore inatteso");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLoadGroups = async () => {
+    setLoading(true);
+    setNotice("");
+    try {
+      const response = await fetch("/api/admin/groups", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ adminCode: adminActionCode }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data?.error || "Errore caricamento gruppi");
+      setAdminGroups(data.groups || []);
+      setAdminGroupsLoaded(true);
     } catch (err) {
       setNotice(err.message || "Errore inatteso");
     } finally {
@@ -876,49 +921,53 @@ export default function ClientApp() {
                   </div>
                 </>
               )}
-              <div className="card">
-                <strong>Aggiungi membro</strong>
-                <div className="grid two">
-                  <label className="field">
-                    Nome
-                    <input
-                      className="input"
-                      value={newMember.name}
-                      onChange={(event) =>
-                        setNewMember((prev) => ({ ...prev, name: event.target.value }))
-                      }
-                    />
-                  </label>
-                  {adminUnlocked ? (
+              {canEditMembers ? (
+                <div className="card">
+                  <strong>Aggiungi membro</strong>
+                  <div className="grid two">
                     <label className="field">
-                      Ruolo
-                      <select
-                        className="select"
-                        value={newMember.role}
+                      Nome
+                      <input
+                        className="input"
+                        value={newMember.name}
                         onChange={(event) =>
-                          setNewMember((prev) => ({ ...prev, role: event.target.value }))
+                          setNewMember((prev) => ({ ...prev, name: event.target.value }))
                         }
-                      >
-                        {ROLE_OPTIONS.map((role) => (
-                          <option key={role.value} value={role.value}>
-                            {role.label}
-                          </option>
-                        ))}
-                      </select>
+                      />
                     </label>
-                  ) : (
-                    <label className="field">
-                      Ruolo
-                      <input className="input" value="Membro" readOnly />
-                    </label>
-                  )}
+                    {adminUnlocked ? (
+                      <label className="field">
+                        Ruolo
+                        <select
+                          className="select"
+                          value={newMember.role}
+                          onChange={(event) =>
+                            setNewMember((prev) => ({ ...prev, role: event.target.value }))
+                          }
+                        >
+                          {ROLE_OPTIONS.map((role) => (
+                            <option key={role.value} value={role.value}>
+                              {role.label}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                    ) : (
+                      <label className="field">
+                        Ruolo
+                        <input className="input" value="Membro" readOnly />
+                      </label>
+                    )}
+                  </div>
+                  <div className="button-row">
+                    <button className="button ghost" onClick={handleAddMember} disabled={loading}>
+                      Aggiungi
+                    </button>
+                  </div>
                 </div>
-                <div className="button-row">
-                  <button className="button ghost" onClick={handleAddMember} disabled={loading}>
-                    Aggiungi
-                  </button>
-                </div>
-              </div>
+              ) : (
+                <div className="muted">Solo l'admin può aggiungere membri.</div>
+              )}
               <div className="list">
                 {members.map((member) => (
                   <div className="card" key={member.id}>
@@ -930,61 +979,100 @@ export default function ClientApp() {
                         <span className="tag">Co-admin</span>
                       ) : null}
                     </div>
-                    <label className="field">
-                      Nome
-                      <input
-                        className="input"
-                        value={memberEdits[member.id] || ""}
-                        onChange={(event) =>
-                          handleMemberNameChange(member.id, event.target.value)
-                        }
-                      />
-                    </label>
-                    {adminUnlocked ? (
-                      <label className="field">
-                        Ruolo
-                        <select
-                          className="select"
-                          value={memberRoles[member.id] || "member"}
-                          onChange={(event) => handleRoleChange(member.id, event.target.value)}
-                        >
-                          {ROLE_OPTIONS.map((role) => (
-                            <option key={role.value} value={role.value}>
-                              {role.label}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                    ) : null}
-                    <div className="button-row">
-                      <button
-                        className="button ghost"
-                        onClick={() => handleSaveMember(member.id)}
-                        disabled={loading}
-                      >
-                        Salva
-                      </button>
-                      {adminUnlocked ? (
-                        <button
-                          className="button ghost"
-                          onClick={() => handleSaveRole(member.id)}
-                          disabled={loading}
-                        >
-                          Aggiorna ruolo
-                        </button>
-                      ) : null}
-                      <button
-                        className="button ghost"
-                        onClick={() => handleDeleteMember(member.id)}
-                        disabled={loading}
-                      >
-                        Rimuovi
-                      </button>
-                    </div>
+                    {canEditMembers ? (
+                      <>
+                        <label className="field">
+                          Nome
+                          <input
+                            className="input"
+                            value={memberEdits[member.id] || ""}
+                            onChange={(event) =>
+                              handleMemberNameChange(member.id, event.target.value)
+                            }
+                          />
+                        </label>
+                        {adminUnlocked ? (
+                          <label className="field">
+                            Ruolo
+                            <select
+                              className="select"
+                              value={memberRoles[member.id] || "member"}
+                              onChange={(event) => handleRoleChange(member.id, event.target.value)}
+                            >
+                              {ROLE_OPTIONS.map((role) => (
+                                <option key={role.value} value={role.value}>
+                                  {role.label}
+                                </option>
+                              ))}
+                            </select>
+                          </label>
+                        ) : null}
+                        <div className="button-row">
+                          <button
+                            className="button ghost"
+                            onClick={() => handleSaveMember(member.id)}
+                            disabled={loading}
+                          >
+                            Salva
+                          </button>
+                          {adminUnlocked ? (
+                            <button
+                              className="button ghost"
+                              onClick={() => handleSaveRole(member.id)}
+                              disabled={loading}
+                            >
+                              Aggiorna ruolo
+                            </button>
+                          ) : null}
+                          <button
+                            className="button ghost"
+                            onClick={() => handleDeleteMember(member.id)}
+                            disabled={loading}
+                          >
+                            Rimuovi
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="muted">Solo l'admin può modificare i membri.</div>
+                    )}
                   </div>
                 ))}
               </div>
             </section>
+
+            {adminUnlocked ? (
+              <section className="panel">
+                <h2 className="panel-title">Pannello admin</h2>
+                <div className="notice">
+                  Elenco completo dei gruppi creati con questo servizio.
+                </div>
+                <div className="button-row">
+                  <button className="button ghost" onClick={handleLoadGroups} disabled={loading}>
+                    Carica gruppi
+                  </button>
+                </div>
+                {adminGroupsLoaded ? (
+                  <div className="list">
+                    {adminGroups.length === 0 ? (
+                      <div className="notice">Nessun gruppo trovato.</div>
+                    ) : (
+                      adminGroups.map((group) => (
+                        <div className="card" key={group.id}>
+                          <strong>{group.name}</strong>
+                          <div className="muted">ID: {group.id}</div>
+                          <div className="muted">
+                            Membri: {group.members_count} • Spese: {group.expenses_count}
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                ) : (
+                  <div className="muted">Premi “Carica gruppi” per visualizzare.</div>
+                )}
+              </section>
+            ) : null}
 
             <section className="panel">
               <h2 className="panel-title">Resoconto</h2>
