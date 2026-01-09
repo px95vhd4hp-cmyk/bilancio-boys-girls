@@ -442,6 +442,33 @@ export default function ClientApp() {
     }
   };
 
+  const handleDeleteGroup = async () => {
+    const confirmed = window.confirm(
+      "Vuoi eliminare definitivamente il gruppo? Questa azione non è reversibile."
+    );
+    if (!confirmed) return;
+    setLoading(true);
+    setNotice("");
+    try {
+      if (!resetCode) throw new Error("Inserisci il codice admin.");
+      const response = await fetch("/api/admin/delete-group", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          groupId: session.groupId,
+          adminCode: resetCode,
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data?.error || "Errore eliminazione gruppo");
+      handleLogout();
+    } catch (err) {
+      setNotice(err.message || "Errore inatteso");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleMemberNameChange = (memberId, value) => {
     setMemberEdits((prev) => ({ ...prev, [memberId]: value }));
   };
@@ -1272,7 +1299,7 @@ export default function ClientApp() {
             <section className="panel section" id="reset">
               <h2 className="panel-title">Reset dati gruppo</h2>
               <div className="notice">
-                Cancella spese e pagamenti del gruppo (i membri restano).
+                Cancella spese e pagamenti del gruppo (i membri restano). Puoi anche eliminare il gruppo.
               </div>
               <label className="field">
                 Codice admin globale
@@ -1287,6 +1314,9 @@ export default function ClientApp() {
               <div className="button-row">
                 <button className="button ghost" onClick={handleReset} disabled={loading}>
                   Azzeramento
+                </button>
+                <button className="button secondary" onClick={handleDeleteGroup} disabled={loading}>
+                  Elimina gruppo
                 </button>
               </div>
             </section>
