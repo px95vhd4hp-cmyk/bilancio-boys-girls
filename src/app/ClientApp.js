@@ -885,14 +885,6 @@ export default function ClientApp() {
                   </span>
                 </div>
               </div>
-              <div className="card">
-                <strong>Andamento spese</strong>
-                {expenseTrend.length < 2 ? (
-                  <div className="muted">Aggiungi almeno 2 spese per vedere il grafico.</div>
-                ) : (
-                  <Sparkline values={expenseTrend} />
-                )}
-              </div>
             </section>
 
             <section className="panel section" id="expense">
@@ -1041,6 +1033,18 @@ export default function ClientApp() {
             <details className="accordion section" id="advanced">
               <summary>Avanzate</summary>
               <div className="advanced-grid">
+                <section className="panel section" id="trend">
+                  <SectionHeader
+                    title="Andamento spese"
+                    help="Grafico degli ultimi importi registrati nel gruppo."
+                    onHelp={handleHelp}
+                  />
+                  {expenseTrend.length < 2 ? (
+                    <div className="muted">Aggiungi almeno 2 spese per vedere il grafico.</div>
+                  ) : (
+                    <Sparkline values={expenseTrend} />
+                  )}
+                </section>
                 <section className="panel section" id="members">
                   <SectionHeader
                     title="Membri del gruppo"
