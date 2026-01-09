@@ -39,7 +39,15 @@ export async function POST(request) {
       .single();
 
     if (memberError) {
-      return Response.json({ error: memberError.message || "Errore creazione utente." }, { status: 400 });
+      return Response.json(
+        {
+          error:
+            memberError.message ||
+            `${memberError.code || "ERR"} ${memberError.details || ""} ${memberError.hint || ""}`.trim() ||
+            "Errore creazione utente.",
+        },
+        { status: 400 }
+      );
     }
 
     return Response.json({
