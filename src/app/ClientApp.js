@@ -671,6 +671,12 @@ export default function ClientApp() {
     }
   };
 
+  const handleHelp = (message) => {
+    if (typeof window !== "undefined") {
+      window.alert(message);
+    }
+  };
+
   return (
     <div className="page">
       <header className="ios-header">
@@ -706,7 +712,11 @@ export default function ClientApp() {
         {!session ? (
           <>
             <section className="panel">
-              <h2 className="panel-title">Crea gruppo</h2>
+              <SectionHeader
+                title="Crea gruppo"
+                help="Crea un nuovo gruppo e definisci il PIN di accesso."
+                onHelp={handleHelp}
+              />
               <div className="grid">
                 <label className="field">
                   Nome gruppo
@@ -763,7 +773,11 @@ export default function ClientApp() {
             </section>
 
             <section className="panel">
-              <h2 className="panel-title">Entra in un gruppo</h2>
+              <SectionHeader
+                title="Entra in un gruppo"
+                help="Inserisci ID gruppo, nome e PIN per accedere."
+                onHelp={handleHelp}
+              />
               <div className="grid">
                 <label className="field">
                   ID gruppo
@@ -882,9 +896,11 @@ export default function ClientApp() {
             </section>
 
             <section className="panel section" id="expense">
-              <h2 className="panel-title">
-                {editingExpenseId ? "Modifica spesa" : "Nuova spesa"}
-              </h2>
+              <SectionHeader
+                title={editingExpenseId ? "Modifica spesa" : "Nuova spesa"}
+                help="Inserisci titolo, importo e partecipanti. Le percentuali sono pesi."
+                onHelp={handleHelp}
+              />
               <div className="grid">
                 <label className="field">
                   Titolo
@@ -982,7 +998,11 @@ export default function ClientApp() {
             </section>
 
             <section className="panel section" id="expenses">
-              <h2 className="panel-title">Spese recenti</h2>
+              <SectionHeader
+                title="Spese recenti"
+                help="Elenco delle ultime spese registrate nel gruppo."
+                onHelp={handleHelp}
+              />
               <div className="list">
                 {expenses.length === 0 ? (
                   <div className="notice">Nessuna spesa registrata.</div>
@@ -1018,7 +1038,15 @@ export default function ClientApp() {
               </div>
             </section>
 
-            <section className="panel section" id="members">
+            <details className="accordion section" id="advanced">
+              <summary>Avanzate</summary>
+              <div className="advanced-grid">
+                <section className="panel section" id="members">
+                  <SectionHeader
+                    title="Membri del gruppo"
+                    help="Elenco dei partecipanti. Solo l'admin può modificarli."
+                    onHelp={handleHelp}
+                  />
               <h2 className="panel-title">Membri del gruppo</h2>
               <div className="notice">
                 Per aggiungere o modificare ruoli admin/co-admin serve il codice admin globale.
@@ -1170,12 +1198,17 @@ export default function ClientApp() {
                   </div>
                 ))}
               </div>
-            </section>
+                </section>
 
             {adminUnlocked ? (
               <section className="panel section" id="admin">
+                <SectionHeader
+                  title="Pannello admin"
+                  help="Visualizza tutti i gruppi creati con il servizio."
+                  onHelp={handleHelp}
+                />
                 <details className="accordion" open={false}>
-                  <summary>Pannello admin</summary>
+                  <summary>Apri pannello</summary>
                   <div className="notice">
                     Elenco completo dei gruppi creati con questo servizio.
                   </div>
@@ -1208,7 +1241,11 @@ export default function ClientApp() {
             ) : null}
 
             <section className="panel section" id="summary">
-              <h2 className="panel-title">Resoconto</h2>
+              <SectionHeader
+                title="Resoconto"
+                help="Mostra chi deve pagare chi in base a spese e pagamenti."
+                onHelp={handleHelp}
+              />
               <div className="list">
                 {transactions.length === 0 ? (
                   <div className="notice">Nessun debito attivo.</div>
@@ -1230,7 +1267,11 @@ export default function ClientApp() {
             </section>
 
             <section className="panel section" id="settle">
-              <h2 className="panel-title">Pareggia</h2>
+              <SectionHeader
+                title="Pareggia"
+                help="Seleziona un debito e registra il pagamento completo."
+                onHelp={handleHelp}
+              />
               {myDebts.length === 0 ? (
                 <div className="notice">Non hai debiti da pareggiare.</div>
               ) : (
@@ -1269,7 +1310,11 @@ export default function ClientApp() {
             </section>
 
             <section className="panel section" id="payments">
-              <h2 className="panel-title">Storico pagamenti</h2>
+              <SectionHeader
+                title="Storico pagamenti"
+                help="Elenco di tutti i pagamenti registrati nel gruppo."
+                onHelp={handleHelp}
+              />
               <div className="list">
                 {settlements.length === 0 ? (
                   <div className="notice">Nessun pagamento registrato.</div>
@@ -1297,7 +1342,11 @@ export default function ClientApp() {
             </section>
 
             <section className="panel section" id="reset">
-              <h2 className="panel-title">Reset dati gruppo</h2>
+              <SectionHeader
+                title="Reset dati gruppo"
+                help="Azzeramento spese/pagamenti o eliminazione gruppo."
+                onHelp={handleHelp}
+              />
               <div className="notice">
                 Cancella spese e pagamenti del gruppo (i membri restano). Puoi anche eliminare il gruppo.
               </div>
@@ -1320,6 +1369,8 @@ export default function ClientApp() {
                 </button>
               </div>
             </section>
+              </div>
+            </details>
           </>
         )}
 
@@ -1385,6 +1436,19 @@ function Sparkline({ values }) {
     <svg viewBox={`0 0 ${width} ${height}`} className="sparkline" role="img">
       <polyline points={points} fill="none" stroke="currentColor" strokeWidth="3" />
     </svg>
+  );
+}
+
+function SectionHeader({ title, help, onHelp }) {
+  return (
+    <div className="section-header">
+      <h2 className="panel-title">{title}</h2>
+      {help ? (
+        <button className="help-btn" type="button" onClick={() => onHelp(help)}>
+          ?
+        </button>
+      ) : null}
+    </div>
   );
 }
 

@@ -304,6 +304,11 @@ body[data-theme="dark"] .notice {
   gap: 12px;
 }
 
+.advanced-grid {
+  display: grid;
+  gap: 16px;
+}
+
 .accordion summary {
   list-style: none;
   cursor: pointer;
@@ -451,6 +456,30 @@ body[data-theme="dark"] .button.secondary {
 
 .section {
   scroll-margin-top: 90px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.help-btn {
+  border: 1px solid var(--line);
+  background: #f4f6fb;
+  color: var(--ink);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+body[data-theme="dark"] .help-btn {
+  background: #1f1f27;
+  border-color: #2a2a32;
+  color: #f2f2f7;
 }
 
 @media (min-width: 860px) {
