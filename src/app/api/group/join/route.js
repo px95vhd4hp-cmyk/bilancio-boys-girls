@@ -37,7 +37,7 @@ export async function POST(request) {
         group_id: group.id,
         name: memberName,
         is_group_admin: false,
-        is_program_admin: isProgramAdmin,
+        is_program_admin: Boolean(isProgramAdmin),
       })
       .select()
       .single();

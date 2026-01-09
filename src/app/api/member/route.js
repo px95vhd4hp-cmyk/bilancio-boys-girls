@@ -15,7 +15,7 @@ export async function POST(request) {
       return Response.json({ error: "Dati mancanti." }, { status: 400 });
     }
 
-    const allowElevated = isProgramAdmin(adminCode);
+    const allowElevated = Boolean(isProgramAdmin(adminCode));
     const isGroupAdmin = role === "admin" && allowElevated;
     const isProgram = role === "coadmin" && allowElevated;
 
