@@ -41,10 +41,11 @@ export async function POST(request) {
     if (memberError) {
       return Response.json(
         {
-          error:
-            memberError.message ||
-            `${memberError.code || "ERR"} ${memberError.details || ""} ${memberError.hint || ""}`.trim() ||
-            "Errore creazione utente.",
+          error: "Errore creazione utente.",
+          detail: memberError.message || null,
+          code: memberError.code || null,
+          hint: memberError.hint || null,
+          info: memberError.details || null,
         },
         { status: 400 }
       );
