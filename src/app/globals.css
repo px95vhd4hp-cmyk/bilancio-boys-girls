@@ -222,6 +222,19 @@ body[data-theme="dark"] .card {
   background: #17171d;
 }
 
+body[data-theme="dark"] .input,
+body[data-theme="dark"] .select,
+body[data-theme="dark"] .textarea {
+  background: #ffffff;
+  color: #111111;
+  border-color: #2a2a32;
+}
+
+body[data-theme="dark"] .input::placeholder,
+body[data-theme="dark"] .textarea::placeholder {
+  color: #6d6d73;
+}
+
 .card strong {
   font-size: 15px;
 }
@@ -401,6 +414,16 @@ body[data-theme="dark"] .bottom-button {
 
 body[data-theme="dark"] .bottom-button.active {
   background: rgba(10, 132, 255, 0.2);
+}
+
+body[data-theme="dark"] .button.ghost {
+  background: #1f1f27;
+  color: #f2f2f7;
+  border-color: #2a2a32;
+}
+
+body[data-theme="dark"] .button.secondary {
+  color: #0f140f;
 }
 
 .sparkline {
