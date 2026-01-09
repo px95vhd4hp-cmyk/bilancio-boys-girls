@@ -128,6 +128,14 @@ export default function ClientApp() {
     }
   }, []);
 
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    document.body.dataset.theme = darkMode ? "dark" : "light";
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("bbg-theme", darkMode ? "dark" : "light");
+    }
+  }, [darkMode]);
+
   const handleGroupParam = (groupId) => {
     if (groupId) {
       setGroupFromLink(groupId);
@@ -1359,10 +1367,3 @@ function GroupParamWatcher({ onChange }) {
 
   return null;
 }
-  useEffect(() => {
-    if (typeof document === "undefined") return;
-    document.body.dataset.theme = darkMode ? "dark" : "light";
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem("bbg-theme", darkMode ? "dark" : "light");
-    }
-  }, [darkMode]);
