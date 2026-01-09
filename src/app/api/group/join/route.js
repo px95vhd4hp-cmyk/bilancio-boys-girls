@@ -20,7 +20,7 @@ export async function POST(request) {
       .single();
 
     if (groupError || !group) {
-      return Response.json({ error: "Gruppo non trovato." }, { status: 404 });
+      return Response.json({ error: groupError?.message || "Gruppo non trovato." }, { status: 404 });
     }
 
     const isValid = await bcrypt.compare(pin, group.pin_hash);
@@ -43,7 +43,7 @@ export async function POST(request) {
       .single();
 
     if (memberError) {
-      return Response.json({ error: "Errore creazione utente." }, { status: 400 });
+      return Response.json({ error: memberError.message || "Errore creazione utente." }, { status: 400 });
     }
 
     return Response.json({

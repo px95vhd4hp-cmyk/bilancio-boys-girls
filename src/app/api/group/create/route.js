@@ -21,7 +21,7 @@ export async function POST(request) {
       .single();
 
     if (groupError) {
-      return Response.json({ error: "Errore creazione gruppo." }, { status: 400 });
+      return Response.json({ error: groupError.message || "Errore creazione gruppo." }, { status: 400 });
     }
 
     const isProgramAdmin =
@@ -39,7 +39,7 @@ export async function POST(request) {
       .single();
 
     if (memberError) {
-      return Response.json({ error: "Errore creazione utente." }, { status: 400 });
+      return Response.json({ error: memberError.message || "Errore creazione utente." }, { status: 400 });
     }
 
     return Response.json({
