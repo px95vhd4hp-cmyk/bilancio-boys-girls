@@ -57,6 +57,7 @@ export default function ClientApp() {
   const [groupFromLink, setGroupFromLink] = useState("");
   const [session, setSession] = useState(null);
   const [notice, setNotice] = useState("");
+  const [activeSection, setActiveSection] = useState("overview");
   const [loading, setLoading] = useState(false);
 
   const [createData, setCreateData] = useState({
@@ -593,11 +594,28 @@ export default function ClientApp() {
     }
   };
 
+  const scrollToSection = (id) => {
+    const el = typeof document !== "undefined" ? document.getElementById(id) : null;
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      setActiveSection(id);
+    }
+  };
+
   return (
     <div className="page">
+      <header className="ios-header">
+        <div>
+          <h1>Bilancio Boys & Girls</h1>
+          <div className="status">
+            {session ? `Attivo: ${session.memberName}` : "Pronto per iniziare"}
+          </div>
+        </div>
+        <span className="ios-chip">{session ? "Online" : "Offline"}</span>
+      </header>
       <div className="shell">
         <GroupParamWatcher onChange={handleGroupParam} />
-        <section className="hero span-2">
+        <section className="hero span-2 section" id="overview">
           <span className="pill">Bilancio Boys & Girls</span>
           <h1>Gestione spese di gruppo, zero stress.</h1>
           <p>
@@ -755,7 +773,7 @@ export default function ClientApp() {
               </div>
             </section>
 
-            <section className="panel">
+            <section className="panel section" id="expense">
               <h2 className="panel-title">
                 {editingExpenseId ? "Modifica spesa" : "Nuova spesa"}
               </h2>
@@ -855,7 +873,7 @@ export default function ClientApp() {
               </div>
             </section>
 
-            <section className="panel">
+            <section className="panel section" id="expenses">
               <h2 className="panel-title">Spese recenti</h2>
               <div className="list">
                 {expenses.length === 0 ? (
@@ -890,7 +908,7 @@ export default function ClientApp() {
               </div>
             </section>
 
-            <section className="panel">
+            <section className="panel section" id="members">
               <h2 className="panel-title">Membri del gruppo</h2>
               <div className="notice">
                 Per aggiungere o modificare ruoli admin/co-admin serve il codice admin globale.
@@ -1042,7 +1060,7 @@ export default function ClientApp() {
             </section>
 
             {adminUnlocked ? (
-              <section className="panel">
+              <section className="panel section" id="admin">
                 <h2 className="panel-title">Pannello admin</h2>
                 <div className="notice">
                   Elenco completo dei gruppi creati con questo servizio.
@@ -1074,7 +1092,7 @@ export default function ClientApp() {
               </section>
             ) : null}
 
-            <section className="panel">
+            <section className="panel section" id="summary">
               <h2 className="panel-title">Resoconto</h2>
               <div className="list">
                 {transactions.length === 0 ? (
@@ -1092,7 +1110,7 @@ export default function ClientApp() {
               </div>
             </section>
 
-            <section className="panel">
+            <section className="panel section" id="settle">
               <h2 className="panel-title">Pareggia</h2>
               {myDebts.length === 0 ? (
                 <div className="notice">Non hai debiti da pareggiare.</div>
@@ -1135,7 +1153,7 @@ export default function ClientApp() {
               )}
             </section>
 
-            <section className="panel">
+            <section className="panel section" id="reset">
               <h2 className="panel-title">Reset dati gruppo</h2>
               <div className="notice">
                 Cancella spese e pagamenti del gruppo (i membri restano).
@@ -1163,6 +1181,34 @@ export default function ClientApp() {
           {loading ? "Operazione in corso..." : "Online e pronto per mobile."}
         </div>
       </div>
+      {session ? (
+        <nav className="bottom-bar">
+          <button
+            className={`bottom-button ${activeSection === "expense" ? "active" : ""}`}
+            onClick={() => scrollToSection("expense")}
+            type="button"
+          >
+            <span className="icon">＋</span>
+            Spesa
+          </button>
+          <button
+            className={`bottom-button ${activeSection === "summary" ? "active" : ""}`}
+            onClick={() => scrollToSection("summary")}
+            type="button"
+          >
+            <span className="icon">≡</span>
+            Resoconto
+          </button>
+          <button
+            className={`bottom-button ${activeSection === "settle" ? "active" : ""}`}
+            onClick={() => scrollToSection("settle")}
+            type="button"
+          >
+            <span className="icon">✓</span>
+            Pareggia
+          </button>
+        </nav>
+      ) : null}
     </div>
   );
 }
