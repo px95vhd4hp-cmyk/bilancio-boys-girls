@@ -1030,6 +1030,7 @@ export default function ClientApp() {
               </div>
             </section>
 
+
             <details className="accordion section" id="advanced">
               <summary>Avanzate</summary>
               <div className="advanced-grid">
@@ -1051,7 +1052,6 @@ export default function ClientApp() {
                     help="Elenco dei partecipanti. Solo l'admin può modificarli."
                     onHelp={handleHelp}
                   />
-              <h2 className="panel-title">Membri del gruppo</h2>
               <div className="notice">
                 Per aggiungere o modificare ruoli admin/co-admin serve il codice admin globale.
               </div>
@@ -1409,12 +1409,12 @@ export default function ClientApp() {
             Pareggia
           </button>
           <button
-            className={`bottom-button ${activeSection === "members" ? "active" : ""}`}
-            onClick={() => scrollToSection("members")}
+            className={`bottom-button ${activeSection === "advanced" ? "active" : ""}`}
+            onClick={() => scrollToSection("advanced")}
             type="button"
           >
-            <span className="icon">👥</span>
-            Membri
+            <span className="icon">⚙️</span>
+            Avanzate
           </button>
         </nav>
       ) : null}
