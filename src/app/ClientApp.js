@@ -60,6 +60,7 @@ export default function ClientApp() {
   const [activeSection, setActiveSection] = useState("overview");
   const [darkMode, setDarkMode] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [authPanel, setAuthPanel] = useState("join");
 
   const [createData, setCreateData] = useState({
     groupName: "",
@@ -711,7 +712,17 @@ export default function ClientApp() {
 
         {!session ? (
           <>
-            <details className="accordion section" open>
+            <details
+              className="accordion section"
+              open={authPanel === "join"}
+              onToggle={(event) => {
+                if (event.currentTarget.open) {
+                  setAuthPanel("join");
+                } else if (authPanel === "join") {
+                  setAuthPanel("");
+                }
+              }}
+            >
               <summary>Accedi al gruppo</summary>
               <section className="panel">
                 {!joinData.groupId ? (
@@ -762,7 +773,17 @@ export default function ClientApp() {
               </section>
             </details>
 
-            <details className="accordion section">
+            <details
+              className="accordion section"
+              open={authPanel === "create"}
+              onToggle={(event) => {
+                if (event.currentTarget.open) {
+                  setAuthPanel("create");
+                } else if (authPanel === "create") {
+                  setAuthPanel("");
+                }
+              }}
+            >
               <summary>Crea gruppo</summary>
               <section className="panel">
                 <div className="grid">
