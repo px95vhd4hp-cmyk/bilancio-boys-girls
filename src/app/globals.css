@@ -304,6 +304,40 @@ body[data-theme="dark"] .notice {
   gap: 12px;
 }
 
+.accordion-card {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+  padding: 10px 12px;
+  display: grid;
+  gap: 12px;
+}
+
+.accordion-toggle {
+  background: transparent;
+  border: none;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  color: inherit;
+  text-align: left;
+}
+
+.accordion-icon {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.accordion-body {
+  display: grid;
+  gap: 12px;
+}
+
 .advanced-grid {
   display: grid;
   gap: 16px;

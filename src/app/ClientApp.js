@@ -712,19 +712,19 @@ export default function ClientApp() {
 
         {!session ? (
           <>
-            <details
-              className="accordion section"
-              open={authPanel === "join"}
-              onToggle={(event) => {
-                if (event.currentTarget.open) {
-                  setAuthPanel("join");
-                } else if (authPanel === "join") {
-                  setAuthPanel("");
-                }
-              }}
-            >
-              <summary>Accedi al gruppo</summary>
-              <section className="panel">
+            <div className="accordion-card section">
+              <button
+                className="accordion-toggle"
+                type="button"
+                aria-expanded={authPanel === "join"}
+                aria-controls="join-panel"
+                onClick={() => setAuthPanel((prev) => (prev === "join" ? "" : "join"))}
+              >
+                <span>Accedi al gruppo</span>
+                <span className="accordion-icon">{authPanel === "join" ? "▴" : "▾"}</span>
+              </button>
+              {authPanel === "join" ? (
+                <section className="panel accordion-body" id="join-panel">
                 {!joinData.groupId ? (
                   <div className="notice">Apri il link del gruppo: l'ID si inserisce da solo.</div>
                 ) : null}
@@ -770,22 +770,23 @@ export default function ClientApp() {
                     Entra nel gruppo
                   </button>
                 </div>
-              </section>
-            </details>
+                </section>
+              ) : null}
+            </div>
 
-            <details
-              className="accordion section"
-              open={authPanel === "create"}
-              onToggle={(event) => {
-                if (event.currentTarget.open) {
-                  setAuthPanel("create");
-                } else if (authPanel === "create") {
-                  setAuthPanel("");
-                }
-              }}
-            >
-              <summary>Crea gruppo</summary>
-              <section className="panel">
+            <div className="accordion-card section">
+              <button
+                className="accordion-toggle"
+                type="button"
+                aria-expanded={authPanel === "create"}
+                aria-controls="create-panel"
+                onClick={() => setAuthPanel((prev) => (prev === "create" ? "" : "create"))}
+              >
+                <span>Crea gruppo</span>
+                <span className="accordion-icon">{authPanel === "create" ? "▴" : "▾"}</span>
+              </button>
+              {authPanel === "create" ? (
+                <section className="panel accordion-body" id="create-panel">
                 <div className="grid">
                   <label className="field">
                     Nome gruppo
@@ -839,8 +840,9 @@ export default function ClientApp() {
                     Crea e continua
                   </button>
                 </div>
-              </section>
-            </details>
+                </section>
+              ) : null}
+            </div>
           </>
         ) : (
           <>
