@@ -711,127 +711,115 @@ export default function ClientApp() {
 
         {!session ? (
           <>
-            <section className="panel">
-              <SectionHeader
-                title="Crea gruppo"
-                help="Crea un nuovo gruppo e definisci il PIN di accesso."
-                onHelp={handleHelp}
-              />
-              <div className="grid">
-                <label className="field">
-                  Nome gruppo
-                  <input
-                    className="input"
-                    value={createData.groupName}
-                    onChange={(event) =>
-                      setCreateData((prev) => ({ ...prev, groupName: event.target.value }))
-                    }
-                    placeholder="Es. Weekend al mare"
-                  />
-                </label>
-                <label className="field">
-                  Il tuo nome
-                  <input
-                    className="input"
-                    value={createData.memberName}
-                    onChange={(event) =>
-                      setCreateData((prev) => ({ ...prev, memberName: event.target.value }))
-                    }
-                    placeholder="Mario"
-                  />
-                </label>
-                <label className="field">
-                  PIN gruppo
-                  <input
-                    className="input"
-                    type="password"
-                    value={createData.pin}
-                    onChange={(event) =>
-                      setCreateData((prev) => ({ ...prev, pin: event.target.value }))
-                    }
-                    placeholder="Codice admin"
-                  />
-                </label>
-                <label className="field">
-                  Codice amministratore programma (opzionale)
-                  <input
-                    className="input"
-                    type="password"
-                    value={createData.adminCode}
-                    onChange={(event) =>
-                      setCreateData((prev) => ({ ...prev, adminCode: event.target.value }))
-                    }
-                    placeholder="Codice admin"
-                  />
-                </label>
-              </div>
-              <div className="button-row">
-                <button className="button" onClick={handleCreate} disabled={loading}>
-                  Crea e continua
-                </button>
-              </div>
-            </section>
+            <details className="accordion section" open>
+              <summary>Accedi al gruppo</summary>
+              <section className="panel">
+                {!joinData.groupId ? (
+                  <div className="notice">Apri il link del gruppo: l'ID si inserisce da solo.</div>
+                ) : null}
+                <div className="grid">
+                  <label className="field">
+                    Il tuo nome
+                    <input
+                      className="input"
+                      value={joinData.memberName}
+                      onChange={(event) =>
+                        setJoinData((prev) => ({ ...prev, memberName: event.target.value }))
+                      }
+                      placeholder="Anna"
+                    />
+                  </label>
+                  <label className="field">
+                    PIN gruppo
+                    <input
+                      className="input"
+                      type="password"
+                      value={joinData.pin}
+                      onChange={(event) =>
+                        setJoinData((prev) => ({ ...prev, pin: event.target.value }))
+                      }
+                      placeholder="PIN gruppo"
+                    />
+                  </label>
+                  <label className="field">
+                    Codice amministratore programma (opzionale)
+                    <input
+                      className="input"
+                      type="password"
+                      value={joinData.adminCode}
+                      onChange={(event) =>
+                        setJoinData((prev) => ({ ...prev, adminCode: event.target.value }))
+                      }
+                      placeholder="Codice admin"
+                    />
+                  </label>
+                </div>
+                <div className="button-row">
+                  <button className="button secondary" onClick={handleJoin} disabled={loading}>
+                    Entra nel gruppo
+                  </button>
+                </div>
+              </section>
+            </details>
 
-            <section className="panel">
-              <SectionHeader
-                title="Entra in un gruppo"
-                help="Inserisci ID gruppo, nome e PIN per accedere."
-                onHelp={handleHelp}
-              />
-              <div className="grid">
-                <label className="field">
-                  ID gruppo
-                  <input
-                    className="input"
-                    value={joinData.groupId}
-                    onChange={(event) =>
-                      setJoinData((prev) => ({ ...prev, groupId: event.target.value }))
-                    }
-                    placeholder="Incolla ID dal link"
-                  />
-                </label>
-                <label className="field">
-                  Il tuo nome
-                  <input
-                    className="input"
-                    value={joinData.memberName}
-                    onChange={(event) =>
-                      setJoinData((prev) => ({ ...prev, memberName: event.target.value }))
-                    }
-                    placeholder="Anna"
-                  />
-                </label>
-                <label className="field">
-                  PIN gruppo
-                  <input
-                    className="input"
-                    type="password"
-                    value={joinData.pin}
-                    onChange={(event) =>
-                      setJoinData((prev) => ({ ...prev, pin: event.target.value }))
-                    }
-                    placeholder="Codice admin"
-                  />
-                </label>
-                <label className="field">
-                  Codice amministratore programma (opzionale)
-                  <input
-                    className="input"
-                    type="password"
-                    value={joinData.adminCode}
-                    onChange={(event) =>
-                      setJoinData((prev) => ({ ...prev, adminCode: event.target.value }))
-                    }
-                    placeholder="Codice admin"
-                  />
-                </label>
-              </div>
-              <div className="button-row">
-                <button className="button secondary" onClick={handleJoin} disabled={loading}>
-                  Entra nel gruppo
-                </button>
-              </div>
-            </section>
+            <details className="accordion section">
+              <summary>Crea gruppo</summary>
+              <section className="panel">
+                <div className="grid">
+                  <label className="field">
+                    Nome gruppo
+                    <input
+                      className="input"
+                      value={createData.groupName}
+                      onChange={(event) =>
+                        setCreateData((prev) => ({ ...prev, groupName: event.target.value }))
+                      }
+                      placeholder="Es. Weekend al mare"
+                    />
+                  </label>
+                  <label className="field">
+                    Il tuo nome
+                    <input
+                      className="input"
+                      value={createData.memberName}
+                      onChange={(event) =>
+                        setCreateData((prev) => ({ ...prev, memberName: event.target.value }))
+                      }
+                      placeholder="Mario"
+                    />
+                  </label>
+                  <label className="field">
+                    PIN gruppo
+                    <input
+                      className="input"
+                      type="password"
+                      value={createData.pin}
+                      onChange={(event) =>
+                        setCreateData((prev) => ({ ...prev, pin: event.target.value }))
+                      }
+                      placeholder="PIN gruppo"
+                    />
+                  </label>
+                  <label className="field">
+                    Codice amministratore programma (opzionale)
+                    <input
+                      className="input"
+                      type="password"
+                      value={createData.adminCode}
+                      onChange={(event) =>
+                        setCreateData((prev) => ({ ...prev, adminCode: event.target.value }))
+                      }
+                      placeholder="Codice admin"
+                    />
+                  </label>
+                </div>
+                <div className="button-row">
+                  <button className="button" onClick={handleCreate} disabled={loading}>
+                    Crea e continua
+                  </button>
+                </div>
+              </section>
+            </details>
           </>
         ) : (
           <>
