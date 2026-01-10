@@ -774,75 +774,66 @@ export default function ClientApp() {
               ) : null}
             </div>
 
-            <div className="accordion-card section">
-              <button
-                className="accordion-toggle"
-                type="button"
-                aria-expanded={authPanel === "create"}
-                aria-controls="create-panel"
-                onClick={() => setAuthPanel((prev) => (prev === "create" ? "" : "create"))}
-              >
-                <span>Crea gruppo</span>
-                <span className="accordion-icon">{authPanel === "create" ? "▴" : "▾"}</span>
-              </button>
-              {authPanel === "create" ? (
-                <section className="panel accordion-body" id="create-panel">
-                <div className="grid">
-                  <label className="field">
-                    Nome gruppo
-                    <input
-                      className="input"
-                      value={createData.groupName}
-                      onChange={(event) =>
-                        setCreateData((prev) => ({ ...prev, groupName: event.target.value }))
-                      }
-                      placeholder="Es. Weekend al mare"
-                    />
-                  </label>
-                  <label className="field">
-                    Il tuo nome
-                    <input
-                      className="input"
-                      value={createData.memberName}
-                      onChange={(event) =>
-                        setCreateData((prev) => ({ ...prev, memberName: event.target.value }))
-                      }
-                      placeholder="Mario"
-                    />
-                  </label>
-                  <label className="field">
-                    PIN gruppo
-                    <input
-                      className="input"
-                      type="password"
-                      value={createData.pin}
-                      onChange={(event) =>
-                        setCreateData((prev) => ({ ...prev, pin: event.target.value }))
-                      }
-                      placeholder="PIN gruppo"
-                    />
-                  </label>
-                  <label className="field">
-                    Codice amministratore programma (opzionale)
-                    <input
-                      className="input"
-                      type="password"
-                      value={createData.adminCode}
-                      onChange={(event) =>
-                        setCreateData((prev) => ({ ...prev, adminCode: event.target.value }))
-                      }
-                      placeholder="Codice admin"
-                    />
-                  </label>
-                </div>
-                <div className="button-row">
-                  <button className="button" onClick={handleCreate} disabled={loading}>
-                    Crea e continua
-                  </button>
-                </div>
-                </section>
-              ) : null}
-            </div>
+            <section className="panel">
+              <SectionHeader
+                title="Crea gruppo"
+                help="Crea un nuovo gruppo e definisci il PIN di accesso."
+                onHelp={handleHelp}
+              />
+              <div className="grid">
+                <label className="field">
+                  Nome gruppo
+                  <input
+                    className="input"
+                    value={createData.groupName}
+                    onChange={(event) =>
+                      setCreateData((prev) => ({ ...prev, groupName: event.target.value }))
+                    }
+                    placeholder="Es. Weekend al mare"
+                  />
+                </label>
+                <label className="field">
+                  Il tuo nome
+                  <input
+                    className="input"
+                    value={createData.memberName}
+                    onChange={(event) =>
+                      setCreateData((prev) => ({ ...prev, memberName: event.target.value }))
+                    }
+                    placeholder="Mario"
+                  />
+                </label>
+                <label className="field">
+                  PIN gruppo
+                  <input
+                    className="input"
+                    type="password"
+                    value={createData.pin}
+                    onChange={(event) =>
+                      setCreateData((prev) => ({ ...prev, pin: event.target.value }))
+                    }
+                    placeholder="PIN gruppo"
+                  />
+                </label>
+                <label className="field">
+                  Codice amministratore programma (opzionale)
+                  <input
+                    className="input"
+                    type="password"
+                    value={createData.adminCode}
+                    onChange={(event) =>
+                      setCreateData((prev) => ({ ...prev, adminCode: event.target.value }))
+                    }
+                    placeholder="Codice admin"
+                  />
+                </label>
+              </div>
+              <div className="button-row">
+                <button className="button" onClick={handleCreate} disabled={loading}>
+                  Crea e continua
+                </button>
+              </div>
+            </section>
           </>
         ) : (
           <>
